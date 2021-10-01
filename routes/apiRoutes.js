@@ -2,49 +2,43 @@ const mongoose = require('mongoose');
 const express = require('express');
 
 const router = require("express").Router();
-const WorkoutPlan = require("../models/Workout.js");
+const Workout = require("../models/Workout.js");
 
 router.get("/stats", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/stats.html"));
 })
 
-// will create new workoutPlan
-router.post("/api/workoutPlan", ({ body }, res) => {
-  WorkoutPlan.create(body)
-    .then(dbWorkoutPlan => {
-      res.json(dbWorkoutPlan);
+// will create new workout
+router.post("/api/workout", ({ body }, res) => {
+  Workout.create(body)
+    .then(dbWorkout => {
+      res.json(dbWorkout);
     })
     .catch(err => {
       res.status(400).json(err);
     });
 });
 
-// will update existing workoutPlan
-router.put("/api/workoutPlan/:id", ({ body }, res) => {
-    //findByIdAndUpdate
-    Workout.findOneAndUpdate({
-      _id: req.params.id
-    },
-    {
-      $push: { exercises: req.body }
-    }, 
-    { new: true 
-    }
-    ).then(dbWorkout =>{
-      res.json(dbWorkout);
-    })
-    .catch(err => {
+// will update existing workout
+router.put("/api/workout/:id",(req,res)=>{   
+  db.Workout.findByIdAndUpdate(  
+   req.params.id,
+   {$push:{workout:req.body} },
+   {new: true,runValidators:true }
+  )
+  .then(dbWorkout => res.json(dbWorkout))
+  .catch(err => { 
       res.json(err)
-    });
-  });
+  })
+});
   
 
 // will get ALL
-router.get("/api/workoutplan", (req, res) => {
-  WorkoutPlan.find({})
+router.get("/api/workout", (req, res) => {
+  Workout.find({})
     .sort({ date: -1 })
-    .then(dbWorkoutPlan => {
-      res.json(dbWorkoutPlan);
+    .then(dbWorkout => {
+      res.json(dbWorkout);
     })
     .catch(err => {
       res.status(400).json(err);
@@ -65,7 +59,7 @@ router.get("/api/workoutplan", (req, res) => {
      to learn how it can be accomplished.
      */
     // AGGREGATE and LIMIT (ReadMe says 7)
-    router.get("/api/workouts/range", (req, res) => {
+    router.get("/api/workout/range", (req, res) => {
       Workout.find({})
       .limit(7)
       .then(dbWorkout => {
