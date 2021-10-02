@@ -4,46 +4,40 @@ const express = require('express');
 const router = require("express").Router();
 const Workout = require("../models/Workout.js");
 
-router.get("/stats", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/stats.html"));
-})
+// router.get("/stats", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../public/stats.html"));
+// })
 
 // will create new workout
 router.post("/api/workout", ({ body }, res) => {
-  Workout.create(body)
-    .then(dbWorkout => {
-      res.json(dbWorkout);
-    })
-    .catch(err => {
-      res.status(400).json(err);
-    });
+  db.Workout.create(body)
+    .then(dbWorkout => { res.json(dbWorkout); })
+    .catch(err => { res.json(err); });
 });
 
 // will update existing workout
-router.put("/api/workout/:id",(req,res)=>{   
-  db.Workout.findByIdAndUpdate(  
-   req.params.id,
-   {$push:{workout:req.body} },
-   {new: true,runValidators:true }
-  )
-  .then(dbWorkout => res.json(dbWorkout))
-  .catch(err => { 
-      res.json(err)
-  })
+router.put("/api/workouts/:id", (req, res) => {
+  console.log(req.body)
+  db.Workout.findByIdAndUpdate(
+    req.params.id,
+    { $push: { workout: req.body }},
+    { new: true })
+    .then(dbWorkout => { res.json(dbWorkout); })
+    .catch(err => { res.json(err); });
 });
   
 
 // will get ALL
-router.get("/api/workout", (req, res) => {
-  Workout.find({})
-    .sort({ date: -1 })
-    .then(dbWorkout => {
-      res.json(dbWorkout);
-    })
-    .catch(err => {
-      res.status(400).json(err);
-    });
-});
+// router.get("/api/workout", (req, res) => {
+//   Workout.find({})
+//     .sort({ date: -1 })
+//     .then(dbWorkout => {
+//       res.json(dbWorkout);
+//     })
+//     .catch(err => {
+//       res.status(400).json(err);
+//     });
+// });
 
 // will get limited number of exercises
 
@@ -59,17 +53,12 @@ router.get("/api/workout", (req, res) => {
      to learn how it can be accomplished.
      */
     // AGGREGATE and LIMIT (ReadMe says 7)
+  
     router.get("/api/workout/range", (req, res) => {
-      Workout.find({})
-      .limit(7)
-      .then(dbWorkout => {
-        res.json(dbWorkout)
-      })
-      .catch(err => {
-        res.status(400).json(err)
-      });
-});
-
+      db.Workout.find({})
+        .then(dbWorkout => { res.json(dbWorkout); })
+        .catch(err => { res.json(err); });
+    });
 
 
 module.exports = router;
